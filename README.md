@@ -88,3 +88,24 @@ npm run start-orders
 npm run start-gateway
 ```
 
+## Querying
+Access the federated GraphQL schema on the Gateway:
+http://localhost:4000. You'll need to provide an `x-cassandra-token`
+HTTP header for any request that involves Stargate (the Gateway will
+forward it).
+
+Access an order:
+```graphql
+{
+  order(id: 1) {
+    products {
+      sku
+      name
+      category
+    }
+  }
+}
+```
+The list of skus is fetched from the orders service. The name and
+category of each product are fetched from Stargate.
+

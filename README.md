@@ -80,7 +80,7 @@ mutation {
 ## Running
 Make sure Stargate is running.
 
-Update `schemaToken` in `gateway.js` with a valid token.
+Update `stargateIntrospectionToken` in `gateway.js` with a valid token.
 
 Launch the two node services:
 ```

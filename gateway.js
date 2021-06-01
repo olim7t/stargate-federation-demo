@@ -1,16 +1,19 @@
 const { ApolloServer } = require("apollo-server");
 const { ApolloGateway, RemoteGraphQLDataSource } = require("@apollo/gateway");
 
-// The Stargate token that Apollo Gateway uses to fetch schema definitions.
-// This is required for internal queries when Gateway starts up.
-const schemaToken = '225d53b8-886e-4e90-9193-ffc10c93e85a';
+// The Stargate token that Apollo Gateway will use when it fetches the schema
+// definitions.
+// Note that this will only be used for internal queries; for user queries, the
+// client must provide their own 'x-cassandra-token' HTTP header, and the
+// gateway will forward it to Stargate.
+const stargateIntrospectionToken = '225d53b8-886e-4e90-9193-ffc10c93e85a';
 
 class StargateGraphQLDataSource extends RemoteGraphQLDataSource {
   willSendRequest({ request, context }) {
-    // TODO only use schemaToken for internal queries, users should always have
-    // to provide their own token.
-    const token = context.stargateToken || schemaToken;
-    request.http.headers.set('x-cassandra-token', token);
+    const token = context.stargateToken
+    if (token != null) {
+      request.http.headers.set('x-cassandra-token', token);
+    }
   }
 }
 
@@ -24,6 +27,10 @@ const gateway = new ApolloGateway({
     // External service (mock):
     { name: "orders", url: "http://localhost:4001/graphql" }
   ],
+
+  introspectionHeaders: {
+    'x-cassandra-token': stargateIntrospectionToken
+  },
 
   buildService({name, url}) {
     if (name == "catalog") {

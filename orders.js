@@ -16,6 +16,10 @@ const typeDefs = gql`
   extend type Query {
     order(id: Int): Order
   }
+
+  # This is a custom Stargate directive. Apollo Gateway requires that we
+  # redeclare it here.
+  directive @atomic on MUTATION
 `;
 
 const resolvers = {

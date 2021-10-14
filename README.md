@@ -1,5 +1,8 @@
 # Stargate Federation example
 
+This is a small example demonstrating how Stargate GraphQL can be
+federated with another service using Apollo Gateway:
+
 ```
                     +--------------------+
                     |  Federated schema  |
@@ -20,7 +23,11 @@ npm install
 ```
 
 ## Creating the Stargate schema
-Create a `catalog` keyspace and deploy the following schema:
+Create a `catalog` keyspace.
+
+To deploy the catalog schema, execute the following mutation on the
+Stargate admin service (`<STARGATE_ROOT_URL>/graphql-admin`):
+
 ```graphql
 mutation {
   deploySchema(
@@ -49,7 +56,9 @@ mutation {
 }
 ```
 
-Insert sample data (referenced by the mock orders service):
+To insert sample data, execute the following mutations on the newly
+created catalog service (`<STARGATE_ROOT_URL>/graphql/catalog`):
+
 ```graphql
 mutation {
   p1: insertProduct(
@@ -80,7 +89,8 @@ mutation {
 ## Running
 Make sure Stargate is running.
 
-Update `stargateIntrospectionToken` in `gateway.js` with a valid token.
+Edit `gateway.js`, adapt `stargateRootUrl` if necessary, and update
+`stargateIntrospectionToken` with a valid token.
 
 Launch the two node services:
 ```
